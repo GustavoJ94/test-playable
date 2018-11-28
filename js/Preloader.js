@@ -1,6 +1,5 @@
 
 var boomRocket = {};
-var score = 0;
 var hueValue = 0;
 var rotationSpeed = config.rotationSpeed;
 var isJumping = true;
@@ -15,7 +14,8 @@ boomRocket.Preloader.prototype = {
         this.load.image('arrow','assets/arrow.png');
         this.load.image('circle','assets/Circle.png');
         this.load.image('rocket','assets/Rocket.png');
-        this.load.image('square','assets/Square.png');   
+        this.load.image('square','assets/Square.png');  
+        this.load.image('spike','assets/spike.png');    
     },
 
     create: function() {
