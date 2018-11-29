@@ -1,6 +1,7 @@
 
 var boomRocket = {};
 var hueValue = 0;
+var score = 0;
 var rotationSpeed = config.rotationSpeed;
 var isJumping = true;
 

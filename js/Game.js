@@ -16,13 +16,38 @@ boomRocket.Game.prototype = {
         //this.game.debug.body(this.player);
     },
 
+    restart: function(){
+        score = 0;
+        isJumping = true;
+        this.gameOver = false;
+        this.player.reset(config.minWidth*0.5,config.minHeight*0.8);
+        this.player.angle = 0;
+        this.player.body.allowGravity = false;
+        this.game.camera.focusOn(this.player);
+        this.jumpTrail.revive();
+        this.fireEngine.revive();
+        this.shipTrail.revive();
+        this.circle.revive();
+        this.tapText.revive();
+        this.scoreText.alpha = 0.3;
+        this.game.input.onDown.remove(this.engineOn, this);
+        this.game.input.onDown.add(this.start, this); 
+    },  
+
     destroyPlayer: function(){
         this.gameOver = true;
         this.scoreText.bringToTop();
+        this.scoreText.alpha = 1;
         this.player.kill();
-        this.jumpTrail.destroy();
-        this.fireEngine.destroy();
-        this.shipTrail.destroy();
+        this.jumpTrail.kill();
+        this.fireEngine.kill();
+        this.shipTrail.kill();
+        this.game.time.events.add(500,this.sendScore,this);
+    },
+
+    sendScore: function(){
+        playsiveSDK.postScore(score);
+        this.game.time.events.add(1000,this.restart,this);
     },
 
     explode: function(){
@@ -101,7 +126,43 @@ boomRocket.Game.prototype = {
 
         this.createRectangles();
         this.createCircles();
+        this.createStartUi();
+        this.createScore();
+        this.makeObstacles();
+        this.createPlayer();
 
+        this.game.input.onDown.add(this.start, this); 
+
+        this.graphics.addChild(this.circle);
+        this.graphics.addChild(this.tapText);
+        this.graphics.addChild(this.player);
+        this.graphics.addChild(this.squareObstacles);
+        this.graphics.addChild(this.circleObstacles);
+        this.graphics.addChild(this.playerDeath);
+
+        this.game.flexcale.onResize.add(function (scale) {
+           this.graphics.scale.set(scale);
+           this.scoreText.scale.set(scale);
+           this.graphics.alignIn(this.game.world, Phaser.CENTER);
+        },this);
+
+        this.game.flexcale.resize();
+        this.graphics.y = this.game.world.height-this.graphics.height;
+    },
+
+    start: function(){
+        this.circle.kill();
+        this.tapText.kill();
+        isJumping = false;
+        this.player.body.allowGravity = true;
+        this.player.body.drag.set(50);
+        this.player.body.gravity.y = 80;
+        this.engineOn();
+        this.game.input.onDown.remove(this.start, this);
+        this.game.input.onDown.add(this.engineOn, this); 
+    },
+
+    createStartUi: function(){
         this.circle = this.game.add.sprite(0, 0, 'circle');
         this.circle.scale.set(1.5);
         this.circle.anchor.set(0.5);
@@ -109,6 +170,15 @@ boomRocket.Game.prototype = {
         this.circle.x = config.minWidth*0.5;
         this.circle.y = config.minHeight*0.8;
 
+        this.tapText = this.game.add.text(0, 0, "TAB TO START", config.textStyle);
+        this.tapText.anchor.set(0.5);
+        this.tapText.x = config.minWidth*0.5;
+        this.tapText.y = config.minHeight*0.725;
+        this.tapText.alpha = 0.3;
+        this.tapTextTween = this.game.add.tween(this.tapText).to({y:this.tapText.y-this.tapText.height*0.25}, 1000, Phaser.Easing.Quadratic.InOut,true,0,-1,true);
+    },
+
+    createPlayer: function(){
         this.player = this.game.add.sprite(0, 0, 'rocket');
         this.player.anchor.set(0.5);
         this.player.x = config.minWidth*0.5;
@@ -122,17 +192,16 @@ boomRocket.Game.prototype = {
         this.player.body.onWorldBounds.add(this.destroyPlayer, this);
         this.player.events.onKilled.add(this.explode,this);
 
-        this.shipTrail = this.game.add.emitter(this.player.x, this.player.y + 25,15);
+        this.shipTrail = this.game.add.emitter(0,  25,15);
         this.shipTrail.setScale(0.5, 5, 0.5, 5, 1500, Phaser.Easing.Quadratic.Out);
         this.shipTrail.setAlpha(0.01, 0.6, 3000 ,Phaser.Easing.Linear.InOut);
-        this.shipTrail.gravity = 0;
         this.shipTrail.setXSpeed(-50, 50);
-        this.shipTrail.setYSpeed(-10, 35);
+        this.shipTrail.setYSpeed(-10, 40);
         this.shipTrail.setRotation(100,-100);
         this.shipTrail.makeParticles(this.game.cache.getBitmapData('black'),15);
         this.shipTrail.flow(800, 250, 5, -1,false);
 
-        this.fireEngine = this.game.add.emitter(this.player.x, this.player.y + 20,8);
+        this.fireEngine = this.game.add.emitter(0, 20,8);
         this.fireEngine.setScale(1, 2, 1, 2);
         this.fireEngine.setAlpha(0.01, 0.5);
         this.fireEngine.setXSpeed(-6, 6);
@@ -156,47 +225,8 @@ boomRocket.Game.prototype = {
         this.jumpTrail.setYSpeed(10, 1000);
         this.jumpTrail.makeParticles([this.game.cache.getBitmapData('yellow'),this.game.cache.getBitmapData('red')],30);
         this.player.addChild(this.jumpTrail);
-
-        this.tapText = this.game.add.text(0, 0, "TAB TO START", config.textStyle);
-        this.tapText.anchor.set(0.5);
-        this.tapText.x = config.minWidth*0.5;
-        this.tapText.y = config.minHeight*0.725;
-        this.tapText.alpha = 0.3;
-        this.tapTextTween = this.game.add.tween(this.tapText).to({y:this.tapText.y-this.tapText.height*0.25}, 1000, Phaser.Easing.Quadratic.InOut,true,0,-1,true);
-
-        this.createScore();
-        this.makeObstacles();
-
-        this.game.input.onDown.add(this.start, this); 
-
-        this.graphics.addChild(this.circle);
-        this.graphics.addChild(this.tapText);
-        this.graphics.addChild(this.player);
-        this.graphics.addChild(this.squareObstacles);
-        this.graphics.addChild(this.circleObstacles);
-        this.graphics.addChild(this.fireEngine);
-        this.graphics.addChild(this.shipTrail);
-        this.graphics.addChild(this.playerDeath);
-
-        this.game.flexcale.onResize.add(function (scale) {
-           this.graphics.scale.set(scale);
-           this.scoreText.scale.set(scale);
-           this.graphics.alignIn(this.game.world, Phaser.CENTER);
-        },this);
-
-        this.game.flexcale.resize();
-        this.graphics.y = this.game.world.height-this.graphics.height;
-    },
-
-    start: function(){
-        this.circle.kill();
-        this.tapText.kill();
-        isJumping = false;
-        this.player.body.drag.set(50);
-        this.player.body.gravity.y = 80;
-        this.engineOn();
-        this.game.input.onDown.remove(this.start, this);
-        this.game.input.onDown.add(this.engineOn, this); 
+        this.player.addChild(this.shipTrail);
+        this.player.addChild(this.fireEngine);
     },
      
     createScore: function() {
@@ -227,12 +257,8 @@ boomRocket.Game.prototype = {
      },
 
     update: function(){ 
-        this.shipTrail.emitX = this.player.x;
-        this.shipTrail.emitY = this.player.y + 25;
-        this.fireEngine.emitX = this.player.x;
-        this.fireEngine.emitY = this.player.y + 20;
-
-        this.scoreText.text = Math.abs(parseInt(this.player.y/288)-2);
+        score = Math.abs(parseInt(this.player.y/288)-2);
+        this.scoreText.text = score;
 
         this.squareObstacles.forEach(function(square){
             square.angle += square.speed * (this.game.time.elapsed/1000);
@@ -257,11 +283,6 @@ boomRocket.Game.prototype = {
               rotationSpeed *= -1;
           }
         }
-
-        if(this.player.y > config.minHeight + this.player.height){
-               console.log("game over");    
-        }
-
     },
 
     changeBgColor: function(){
