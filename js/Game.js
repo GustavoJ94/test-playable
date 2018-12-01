@@ -100,7 +100,7 @@ boomRocket.Game.prototype = {
         square.speed = this.game.rnd.between(-35,35);
         square.body.immovable = true;
         square.angle = this.game.rnd.between(0,90);
-        square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+        square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
         square.body.setCircle(square.width*1.5, (-(square.width*1.5) + 0.5 * square.width  / square.scale.x),(-(square.width*1.5) + 0.5 * square.height / square.scale.y));
     },
 
@@ -111,7 +111,7 @@ boomRocket.Game.prototype = {
         circle.body.immovable = true;
         circle.body.allowGravity = false;
 
-        circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.8));
+        circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.8));
         
         if(this.game.device.desktop)
             var radius = circle.width*0.45;
@@ -133,7 +133,7 @@ boomRocket.Game.prototype = {
         item.effectDot = this.game.add.tween(dot).to( { alpha: 0 }, 800, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true);
         item.addChild(dot);
         item.body.immovable = true;
-        item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+        item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
         var radius = item.width;
         item.body.setCircle(radius, (-radius + 0.5 * item.width  / item.scale.x),(-radius + 0.5 * item.height / item.scale.y));
     },
@@ -154,15 +154,15 @@ boomRocket.Game.prototype = {
 
     restartObstacles: function(){
         this.squareObstacles.forEach(function(square){
-          square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+          square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
         },this);
 
         this.circleObstacles.forEach(function(circle){
-          circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.8));
+          circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.8));
         },this);
 
         this.items.forEach(function(item){
-          item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+          item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
         },this);
     },
 
@@ -256,9 +256,9 @@ boomRocket.Game.prototype = {
         this.player.body.maxAngular = 1500;
         this.player.body.allowGravity = false;
 
-        this.game.camera.follow(this.player,null,1,1);
+        this.game.camera.follow(this.player,null,1,1,0,0);
         this.game.camera.focusOn(this.player);
-        this.game.camera.deadzone = new Phaser.Rectangle(this.game.width*0.4, this.game.height*0.47, this.game.width*0.1, this.game.height*0.5);
+        this.game.camera.deadzone = new Phaser.Rectangle(this.game.width*0.4, this.game.height*0.45, this.game.width*0.1, this.game.height*0.5);
         this.player.body.onWorldBounds = new Phaser.Signal()
         this.player.body.onWorldBounds.add(this.destroyPlayer, this);
         this.player.events.onKilled.add(this.explode,this);
@@ -368,19 +368,19 @@ boomRocket.Game.prototype = {
         this.squareObstacles.forEach(function(square){
             square.angle += square.speed * (this.game.time.elapsed/1000);
             if(square.y > this.player.y + (this.game.height*0.5))
-                square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+                square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
         },this);
 
         this.circleObstacles.forEach(function(circle){
             circle.angle += circle.speed * (this.game.time.elapsed/1000);
               if(circle.y > this.player.y + (this.game.height*0.5))
-                circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.8));
+                circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.8));
         },this);
 
         this.items.forEach(function(item){
             item.y += item.speed * (this.game.time.elapsed/1000);
               if(item.y > this.player.y + (this.game.height*0.5))
-                item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+                item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
         },this);
 
         this.game.physics.arcade.collide(this.player, [this.ground,this.circleObstacles,this.squareObstacles], this.destroyPlayer, null, this);
