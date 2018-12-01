@@ -77,14 +77,14 @@ boomRocket.Game.prototype = {
         this.items = this.game.add.group();
         this.items.enableBody = true;
         this.game.physics.enable(this.items, Phaser.Physics.ARCADE);
-        this.items.createMultiple(config.item, 'item');  
+        this.items.createMultiple(config.items, 'item');  
     },
 
     createCircles: function(){
         this.circleObstacles = this.game.add.group();
         this.circleObstacles.enableBody = true;
         this.game.physics.enable(this.circleObstacles, Phaser.Physics.ARCADE);
-        this.circleObstacles.createMultiple(config.spike, 'spike');
+        this.circleObstacles.createMultiple(config.spikes, 'spike');
 
         this.circleObstacles.forEach(function(circle){
             var randomSize = this.game.rnd.realInRange(0.5,1.5);
