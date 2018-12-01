@@ -252,7 +252,7 @@ boomRocket.Game.prototype = {
         this.ground.width = this.game.width;
         this.ground.anchor.set(0.5);
         this.ground.x = this.game.width*0.5;
-        this.ground.alpha = 1;
+        this.ground.alpha = 0;
         this.ground.y = this.game.camera.deadzone.bottom+this.ground.height;
         this.game.physics.enable(this.ground, Phaser.Physics.ARCADE);
         this.ground.body.allowGravity = false;
