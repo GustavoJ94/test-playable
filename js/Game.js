@@ -368,19 +368,19 @@ boomRocket.Game.prototype = {
         this.squareObstacles.forEach(function(square){
             square.angle += square.speed * (this.game.time.elapsed/1000);
             if(square.y > this.player.y + (this.game.height*0.5))
-                square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
+                square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.4,this.player.y-this.game.height*0.3));
         },this);
 
         this.circleObstacles.forEach(function(circle){
             circle.angle += circle.speed * (this.game.time.elapsed/1000);
               if(circle.y > this.player.y + (this.game.height*0.5))
-                circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.8));
+                circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.4,this.player.y-this.game.height*0.8));
         },this);
 
         this.items.forEach(function(item){
             item.y += item.speed * (this.game.time.elapsed/1000);
               if(item.y > this.player.y + (this.game.height*0.5))
-                item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3));
+                item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.4,this.player.y-this.game.height*0.3));
         },this);
 
         this.game.physics.arcade.collide(this.player, [this.ground,this.circleObstacles,this.squareObstacles], this.destroyPlayer, null, this);
