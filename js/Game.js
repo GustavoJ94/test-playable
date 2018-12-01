@@ -11,14 +11,6 @@ boomRocket.Game.prototype = {
 
     render: function(){
         this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
-        //this.game.debug.cameraInfo(this.game.camera, 2, 32);
-        //this.game.debug.body(this.player);
-        //this.game.debug.body(this.ground);
-        this.game.context.fillStyle = 'rgba(255,0,0,0.6)'
-        //this.game.context.fillRect(this.game.camera.deadzone.x, this.game.camera.deadzone.y, this.game.camera.deadzone.width, this.game.camera.deadzone.height);
-        //this.circleObstacles.forEach(function(obj){this.game.debug.body(obj);},this);
-        //this.items.forEach(function(obj){this.game.debug.body(obj);},this);
-        //this.squareObstacles.forEach(function(obj){this.game.debug.body(obj);},this);
     },
 
     restart: function(){
@@ -72,7 +64,7 @@ boomRocket.Game.prototype = {
         this.squareObstacles = this.game.add.group();
         this.squareObstacles.enableBody = true;
         this.game.physics.enable(this.squareObstacles, Phaser.Physics.ARCADE);
-        this.squareObstacles.createMultiple(10, 'square');
+        this.squareObstacles.createMultiple(config.rectangles, 'square');
 
         this.squareObstacles.forEach(function(square){
             var randomSize = this.game.rnd.realInRange(0.2,0.8);
@@ -85,14 +77,14 @@ boomRocket.Game.prototype = {
         this.items = this.game.add.group();
         this.items.enableBody = true;
         this.game.physics.enable(this.items, Phaser.Physics.ARCADE);
-        this.items.createMultiple(10, 'item');  
+        this.items.createMultiple(config.item, 'item');  
     },
 
     createCircles: function(){
         this.circleObstacles = this.game.add.group();
         this.circleObstacles.enableBody = true;
         this.game.physics.enable(this.circleObstacles, Phaser.Physics.ARCADE);
-        this.circleObstacles.createMultiple(6, 'spike');
+        this.circleObstacles.createMultiple(config.spike, 'spike');
 
         this.circleObstacles.forEach(function(circle){
             var randomSize = this.game.rnd.realInRange(0.5,1.5);
@@ -134,7 +126,7 @@ boomRocket.Game.prototype = {
         dot.anchor.set(0.5);
         dot.alpha = 0.5;
         item.anchor.set(0.5);
-        item.speed = this.game.rnd.between(5, 10);
+        item.speed = this.game.rnd.between(10, 25);
         item.animations.add('blink',[1,2,3,4],6,true);
         item.animations.play('blink');       
         item.effectDot = this.game.add.tween(dot).to( { alpha: 0 }, 800, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true);
@@ -230,7 +222,7 @@ boomRocket.Game.prototype = {
         this.specialPower.setRotation(0,0);
         this.specialPower.makeParticles([this.game.cache.getBitmapData('black'),this.game.cache.getBitmapData('white')],150);
 
-        this.tapText = this.game.add.text(0, 0, "TAB TO START", config.textStyle);
+        this.tapText = this.game.add.text(0, 0, config.startText, config.textStyle);
         this.tapText.anchor.set(0.5);
         this.tapText.x = config.minWidth*0.5;
         this.tapText.y = config.minHeight*0.725;
@@ -239,17 +231,6 @@ boomRocket.Game.prototype = {
     },
 
     createPlayer: function(){
-        this.ground = this.game.add.sprite(0, 0, 'square');
-        this.ground.width = this.game.width;
-        this.ground.anchor.set(0.5);
-        this.ground.x = this.game.width*0.5;
-        this.ground.y = this.game.height*0.985;
-        this.ground.alpha = 0;
-        this.game.physics.enable(this.ground, Phaser.Physics.ARCADE);
-        this.ground.body.allowGravity = false;
-        this.ground.body.inmovable = true;
-        this.ground.fixedToCamera = true;
-
         this.player = this.game.add.sprite(0, 0, 'rocket');
         this.player.anchor.set(0.5);
         this.player.x = config.minWidth*0.5;
@@ -262,10 +243,21 @@ boomRocket.Game.prototype = {
 
         this.game.camera.follow(this.player,null,1,1);
         this.game.camera.focusOn(this.player);
-        this.game.camera.deadzone = new Phaser.Rectangle(this.game.width*0.4, this.game.height*0.46, this.game.width*0.1, this.game.height*0.5);
+        this.game.camera.deadzone = new Phaser.Rectangle(this.game.width*0.4, this.game.height*0.47, this.game.width*0.1, this.game.height*0.5);
         this.player.body.onWorldBounds = new Phaser.Signal()
         this.player.body.onWorldBounds.add(this.destroyPlayer, this);
         this.player.events.onKilled.add(this.explode,this);
+
+        this.ground = this.game.add.sprite(0, 0, 'square');
+        this.ground.width = this.game.width;
+        this.ground.anchor.set(0.5);
+        this.ground.x = this.game.width*0.5;
+        this.ground.alpha = 1;
+        this.ground.y = this.game.camera.deadzone.bottom+this.ground.height;
+        this.game.physics.enable(this.ground, Phaser.Physics.ARCADE);
+        this.ground.body.allowGravity = false;
+        this.ground.body.inmovable = true;
+        this.ground.fixedToCamera = true;
 
         this.shipTrail = this.game.add.emitter(this.player.x, this.player.y + 25,80);
         this.shipTrail.setScale(0.5, 5, 0.5, 5, 1500, Phaser.Easing.Quadratic.Out);
@@ -349,7 +341,7 @@ boomRocket.Game.prototype = {
     update: function(){ 
         if(!this.isStart) return;
 
-        this.player.y += 25 * (this.game.time.elapsed/1000);
+        this.player.y += 35 * (this.game.time.elapsed/1000);
         this.shipTrail.emitX = this.player.x;
         this.shipTrail.emitY = this.player.y + 25;
         this.fireEngine.emitX = this.player.x;
