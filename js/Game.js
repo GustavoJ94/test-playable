@@ -34,6 +34,7 @@ boomRocket.Game.prototype = {
         this.shipTrail.flow(800, 250, 5, -1,false);
         this.fireEngine.flow(200, 100, 6, -1,false);
         this.scoreText.alpha = 0.3;
+        this.restartObstacles();
         this.game.input.onDown.remove(this.engineOn, this);
         this.game.input.onDown.add(this.start, this); 
     },  
@@ -68,7 +69,7 @@ boomRocket.Game.prototype = {
 
         this.squareObstacles.forEach(function(square){
             var randomSize = this.game.rnd.realInRange(0.2,0.8);
-            square.scale.set(square.scale.x * randomSize, square.scale.y * randomSize * 1.5);
+            square.scale.set(square.scale.x * randomSize, square.scale.y * randomSize * 2);
         },this);
         
     },
@@ -100,7 +101,7 @@ boomRocket.Game.prototype = {
         square.body.immovable = true;
         square.angle = this.game.rnd.between(0,90);
         square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
-        square.body.setCircle(square.width, (-(square.width) + 0.5 * square.width  / square.scale.x),(-(square.width) + 0.5 * square.height / square.scale.y));
+        square.body.setCircle(square.width*1.5, (-(square.width*1.5) + 0.5 * square.width  / square.scale.x),(-(square.width*1.5) + 0.5 * square.height / square.scale.y));
     },
 
     addCircles: function(){
@@ -149,6 +150,20 @@ boomRocket.Game.prototype = {
         for(var i = 0; i<this.items.children.length; i++){
             this.addItems();
         }
+    },
+
+    restartObstacles: function(){
+        this.squareObstacles.forEach(function(square){
+          square.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+        },this);
+
+        this.circleObstacles.forEach(function(circle){
+          circle.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.8));
+        },this);
+
+        this.items.forEach(function(item){
+          item.reset(this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width),this.game.rnd.between(this.player.y-this.game.height*0.5,this.player.y-this.game.height*0.3));
+        },this);
     },
 
     create: function() { 
