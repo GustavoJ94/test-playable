@@ -5,12 +5,6 @@ var score = 0;
 var rotationSpeed = config.rotationSpeed;
 var isJumping = true;
 
-WebFontConfig = {
-    google: {
-      families: ['Noto Sans']
-    }
-}
-
 boomRocket.Preloader = function(game) {
     this.game = game;
 };
@@ -18,7 +12,7 @@ boomRocket.Preloader = function(game) {
 boomRocket.Preloader.prototype = {
     
     preload: function() {
-        this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
+        this.load.bitmapFont('font', 'assets/font.png', 'assets/font.xml');
         this.load.image('arrow','assets/arrow.png');
         this.load.image('circle','assets/Circle.png');
         this.load.image('rocket','assets/Rocket.png');

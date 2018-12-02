@@ -6,6 +6,7 @@ boomRocket.Game.prototype = {
     
     init: function(){
         playsiveSDK.gameLoaded();
+        this.game.time.desiredFps = 30;
     },
 
     restart: function(){
@@ -38,7 +39,6 @@ boomRocket.Game.prototype = {
 
     destroyPlayer: function(){
         this.gameOver = true;
-        this.scoreText.bringToTop();
         this.scoreText.alpha = 1;
         this.player.kill();
         this.jumpTrail.kill();
@@ -252,7 +252,7 @@ boomRocket.Game.prototype = {
         this.specialPower.setRotation(0,0);
         this.specialPower.makeParticles([this.game.cache.getBitmapData('black'),this.game.cache.getBitmapData('white')],150);
 
-        this.tapText = this.game.add.text(0, 0, config.startText, config.textStyle);
+        this.tapText = this.game.add.bitmapText(0, 0,'font', config.startText);
         this.tapText.anchor.set(0.5);
         this.tapText.x = config.minWidth*0.5;
         this.tapText.y = config.minHeight*0.7;
@@ -290,7 +290,7 @@ boomRocket.Game.prototype = {
         this.ground.fixedToCamera = true;
 
         this.shipTrail = this.game.add.emitter(this.player.x, this.player.y + 25,20);
-        this.shipTrail.setScale(0.5, 5, 0.5, 5, 1500, Phaser.Easing.Quadratic.Out);
+        this.shipTrail.setScale(2, 5, 2, 5, 1500, Phaser.Easing.Quadratic.Out);
         this.shipTrail.setAlpha(0.01, 0.6, 3000 ,Phaser.Easing.Linear.InOut);
         this.shipTrail.setXSpeed(-50, 50);
         this.shipTrail.setYSpeed(-10, 40);
@@ -348,7 +348,7 @@ boomRocket.Game.prototype = {
     },
      
     createScore: function() {
-        this.scoreText = this.game.add.text(0, 0, 0, config.textStyle2);
+        this.scoreText = this.game.add.bitmapText(0, 0,'font', '0',200);
         this.scoreText.anchor.set(0.5);
         this.scoreText.x = this.game.width*0.5;
         this.scoreText.y = this.game.height*0.45;
