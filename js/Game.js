@@ -65,7 +65,7 @@ boomRocket.Game.prototype = {
         this.circle1.effectDot2.start(); 
         this.circle2.effectDot.start(); 
         this.circle2.effectDot2.start(); 
-        this.playerDeath.flow(600, 250, 35, 35,false);
+        this.playerDeath.flow(600, 250, 20, 20,false);
         this.playerDeath2.flow(600, 250, 10, 10,false);
     },
 
@@ -289,14 +289,14 @@ boomRocket.Game.prototype = {
         this.ground.body.inmovable = true;
         this.ground.fixedToCamera = true;
 
-        this.shipTrail = this.game.add.emitter(this.player.x, this.player.y + 25,80);
+        this.shipTrail = this.game.add.emitter(this.player.x, this.player.y + 25,20);
         this.shipTrail.setScale(0.5, 5, 0.5, 5, 1500, Phaser.Easing.Quadratic.Out);
         this.shipTrail.setAlpha(0.01, 0.6, 3000 ,Phaser.Easing.Linear.InOut);
         this.shipTrail.setXSpeed(-50, 50);
         this.shipTrail.setYSpeed(-10, 40);
         this.shipTrail.setRotation(100,-100);
-        this.shipTrail.makeParticles(this.game.cache.getBitmapData('black'),80);
-        this.shipTrail.flow(800, 250, 15, -1,false);
+        this.shipTrail.makeParticles(this.game.cache.getBitmapData('black'),20);
+        this.shipTrail.flow(800, 250, 10, -1,false);
 
         this.fireEngine = this.game.add.emitter(this.player.x, this.player.y + 20,8);
         this.fireEngine.setScale(1, 2, 1, 2);
@@ -322,13 +322,13 @@ boomRocket.Game.prototype = {
         this.circle1.effectDot2.onComplete.add(function(){this.circle1.kill();this.circle1.scale.set(0);this.circle1.alpha = 0;},this);
         this.circle2.effectDot2.onComplete.add(function(){this.circle2.kill();this.circle2.scale.set(0);this.circle2.alpha = 0;},this);
 
-        this.playerDeath = this.game.add.emitter(this.player.x,  this.player.y,35);
+        this.playerDeath = this.game.add.emitter(this.player.x,  this.player.y,20);
         this.playerDeath.setAlpha(0.1, 0.6, 800);
         this.playerDeath.setXSpeed(-300, 300);
         this.playerDeath.setYSpeed(-300, 300);
         this.playerDeath.setRotation(50,-100);
         this.playerDeath.setScale(1, 5, 1, 5, 1000, Phaser.Easing.Quintic.Out);
-        this.playerDeath.makeParticles([this.game.cache.getBitmapData('yellow'),this.game.cache.getBitmapData('red'),this.game.cache.getBitmapData('black')], 35);
+        this.playerDeath.makeParticles([this.game.cache.getBitmapData('yellow'),this.game.cache.getBitmapData('red'),this.game.cache.getBitmapData('black')], 20);
 
         this.playerDeath2 = this.game.add.emitter(this.player.x,  this.player.y,10);
         this.playerDeath2.setAlpha(0.2, 0.3, 800);
@@ -338,12 +338,12 @@ boomRocket.Game.prototype = {
         this.playerDeath2.setScale(6, 8, 6, 8, 1000, Phaser.Easing.Quintic.Out);
         this.playerDeath2.makeParticles(this.game.cache.getBitmapData('black'), 10);
 
-        this.jumpTrail = this.game.add.emitter(0, 20,50);
+        this.jumpTrail = this.game.add.emitter(0, 20,20);
         this.jumpTrail.setScale(2, 4, 2, 4, 800, Phaser.Easing.Quintic.Out);
         this.jumpTrail.setAlpha(0.01, 0.5);
         this.jumpTrail.setXSpeed(-20, 20);
         this.jumpTrail.setYSpeed(10, 800);
-        this.jumpTrail.makeParticles([this.game.cache.getBitmapData('yellow'),this.game.cache.getBitmapData('red')],50);
+        this.jumpTrail.makeParticles([this.game.cache.getBitmapData('yellow'),this.game.cache.getBitmapData('red')],20);
         this.player.addChild(this.jumpTrail);
     },
      
@@ -361,7 +361,7 @@ boomRocket.Game.prototype = {
 
           isJumping = true;
           this.isPowerUp = false;
-          this.jumpTrail.flow(400, 250, 35, 35,false);
+          this.jumpTrail.flow(400, 250, 20, 20,false);
           this.acceleratePlayer(config.normalJump,800);
      },
 
@@ -386,7 +386,7 @@ boomRocket.Game.prototype = {
           this.player.shield = true;
           this.specialPower.emitX = this.player.x;
           this.specialPower.emitY = this.player.y-this.game.height;
-          this.jumpTrail.flow(400, 250, 35, 35,false);
+          this.jumpTrail.flow(400, 250, 20, 20,false);
           this.specialPower.flow(800, 250, 150, 150,false);
           this.acceleratePlayer(config.specialJump,1000);
      },
