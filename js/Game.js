@@ -6,7 +6,7 @@ boomRocket.Game.prototype = {
     
     init: function(){
         playsiveSDK.gameLoaded();
-        this.game.time.desiredFps = 30;
+        this.game.time.desiredFps = config.desiredFPS;
     },
 
     restart: function(){
@@ -273,7 +273,7 @@ boomRocket.Game.prototype = {
 
         this.game.camera.follow(this.player,null,1,1,0,0);
         this.game.camera.focusOn(this.player);
-        this.game.camera.deadzone = new Phaser.Rectangle(this.game.width*0.4, this.game.height*0.6, this.game.width*0.1, this.game.height*0.35);
+        this.game.camera.deadzone = new Phaser.Rectangle(this.game.width*0.4, this.game.height*0.6, this.game.width*0.1, this.game.height*0.25);
         this.player.body.onWorldBounds = new Phaser.Signal()
         this.player.body.onWorldBounds.add(this.destroyPlayer, this);
         this.player.events.onKilled.add(this.explode,this);
@@ -283,7 +283,7 @@ boomRocket.Game.prototype = {
         this.ground.anchor.set(0.5);
         this.ground.x = this.game.width*0.5;
         this.ground.alpha = 0;
-        this.ground.y = this.game.camera.deadzone.bottom+this.ground.height;
+        this.ground.y = this.game.camera.deadzone.bottom+this.ground.height+this.game.height*0.1;
         this.game.physics.enable(this.ground, Phaser.Physics.ARCADE);
         this.ground.body.allowGravity = false;
         this.ground.body.inmovable = true;
@@ -315,10 +315,10 @@ boomRocket.Game.prototype = {
         this.circle2.scale.set(0);
         this.circle2.anchor.set(0.5);
         this.circle2.alpha = 0;
-        this.circle1.effectDot = this.game.add.tween(this.circle1).to( { alpha: 0.05 }, 600, Phaser.Easing.Sinusoidal.Out, false);
-        this.circle1.effectDot2 = this.game.add.tween(this.circle1.scale).to( {x:1,y:1}, 600, Phaser.Easing.Quadratic.Out, false);
-        this.circle2.effectDot = this.game.add.tween(this.circle2).to( { alpha: 0.05 }, 800, Phaser.Easing.Sinusoidal.Out, false);
-        this.circle2.effectDot2 = this.game.add.tween(this.circle2.scale).to( {x:2,y:2}, 800, Phaser.Easing.Quadratic.Out, false);
+        this.circle1.effectDot = this.game.add.tween(this.circle1).to( { alpha: 0.05 }, 400, Phaser.Easing.Sinusoidal.Out, false);
+        this.circle1.effectDot2 = this.game.add.tween(this.circle1.scale).to( {x:1,y:1}, 400, Phaser.Easing.Quadratic.Out, false);
+        this.circle2.effectDot = this.game.add.tween(this.circle2).to( { alpha: 0.05 }, 600, Phaser.Easing.Sinusoidal.Out, false);
+        this.circle2.effectDot2 = this.game.add.tween(this.circle2.scale).to( {x:2,y:2}, 600, Phaser.Easing.Quadratic.Out, false);
         this.circle1.effectDot2.onComplete.add(function(){this.circle1.kill();this.circle1.scale.set(0);this.circle1.alpha = 0;},this);
         this.circle2.effectDot2.onComplete.add(function(){this.circle2.kill();this.circle2.scale.set(0);this.circle2.alpha = 0;},this);
 
@@ -351,7 +351,7 @@ boomRocket.Game.prototype = {
         this.scoreText = this.game.add.bitmapText(0, 0,'font', '0',200);
         this.scoreText.anchor.set(0.5);
         this.scoreText.x = this.game.width*0.5;
-        this.scoreText.y = this.game.height*0.45;
+        this.scoreText.y = this.game.height*0.5;
         this.scoreText.alpha = 0.3;
         this.scoreText.fixedToCamera = true;
     },
