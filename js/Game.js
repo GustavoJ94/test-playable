@@ -361,7 +361,7 @@ boomRocket.Game.prototype = {
 
           isJumping = true;
           this.isPowerUp = false;
-          this.jumpTrail.flow(400, 250, 20, 20,false);
+          this.jumpTrail.flow(200, 250, 20, 20,false);
           this.acceleratePlayer(config.normalJump,800);
      },
 
@@ -386,7 +386,7 @@ boomRocket.Game.prototype = {
           this.player.shield = true;
           this.specialPower.emitX = this.player.x;
           this.specialPower.emitY = this.player.y-this.game.height;
-          this.jumpTrail.flow(400, 250, 20, 20,false);
+          this.jumpTrail.flow(200, 250, 20, 20,false);
           this.specialPower.flow(800, 250, 150, 150,false);
           this.acceleratePlayer(config.specialJump,1000);
      },
