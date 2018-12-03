@@ -81,13 +81,12 @@ boomRocket.Game.prototype = {
     },
 
     createAreaEffect: function(){
-        this.areaEffect = this.game.add.group();
-        this.areaEffect.enableBody = true;
+        this.areaEffect = this.game.add.sprite(0, 0, 'arrow');
+        this.areaEffect.anchor.set(0.5);
         this.game.physics.enable(this.areaEffect, Phaser.Physics.ARCADE);
-        this.areaEffect.createMultiple(config.arrows, 'arrow',0,true); 
-        this.areaEffect.align(11, 11, 32, 32);
         this.areaEffect.alpha = 0.3;
         this.areaEffect.angle = this.game.rnd.between(0,360);
+        this.areaEffect.body.setCircle(this.areaEffect.width, (-(this.areaEffect.width) + 0.5 * this.areaEffect.width  / this.areaEffect.scale.x),(-(this.areaEffect.width) + 0.5 * this.areaEffect.height / this.areaEffect.scale.y));
         this.areaEffect.x = this.game.rnd.between(this.player.x-this.game.width,this.player.x+this.game.width);
         this.areaEffect.y = this.game.rnd.between(this.player.y-this.game.height*0.8,this.player.y-this.game.height*0.3);
     },
@@ -436,8 +435,8 @@ boomRocket.Game.prototype = {
         if(!this.player.shield){
           this.game.physics.arcade.overlap(this.player, [this.ground,this.circleObstacles,this.squareObstacles], this.destroyPlayer, null, this);
           this.game.physics.arcade.overlap(this.player, this.areaEffect, this.forceAreaEffect, null, this);
+          this.game.physics.arcade.overlap(this.player, this.items, this.activatePower, null, this);
         }
-        this.game.physics.arcade.overlap(this.player, this.items, this.activatePower, null, this);
 
         if(isJumping == false){
         

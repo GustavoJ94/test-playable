@@ -13,7 +13,7 @@ boomRocket.Preloader.prototype = {
     
     preload: function() {
         this.load.bitmapFont('font', 'assets/font.png', 'assets/font.xml');
-        this.load.image('arrow','assets/arrow.png');
+        this.load.image('arrow','assets/arrows.png');
         this.load.image('circle','assets/Circle.png');
         this.load.image('rocket','assets/Rocket.png');
         this.load.image('square','assets/Square.png');  
