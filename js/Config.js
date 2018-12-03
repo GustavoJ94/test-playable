@@ -4,9 +4,10 @@ var config = {
 	minHeight: 720,
 	rotationSpeed: 140, 
 	angleLimit: 60,
-	items:15,
+	items:12,
 	spikes:8,
-	rectangles:30,
+	arrows:121,
+	rectangles:28,
 	normalJump:600,
 	specialJump:1600,
 	desiredFPS:60, // 60 or 30 depending mobile device target
