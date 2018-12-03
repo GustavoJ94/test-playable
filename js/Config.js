@@ -6,7 +6,6 @@ var config = {
 	angleLimit: 60,
 	items:12,
 	spikes:8,
-	arrows:121,
 	rectangles:28,
 	normalJump:600,
 	specialJump:1600,
