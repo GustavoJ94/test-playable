@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	   <style type="text/css">
+        html, body{
+            padding: 0px;
+			margin-bottom:0px;
+            margin: 0px;
+			background: black;
+			height:100%;
+        }
+	 </style>
+	<meta charset="UTF-8" />
+	<meta content="chrome=1,IE=Edge" http-equiv="X-UA-Compatible"></meta>
+	<meta content="noindex,nofollow" name="robots"></meta>
+	<meta content="yes" name="apple-mobile-web-app-capable"></meta>
+	<meta content="black" name="apple-mobile-web-app-status-bar-style"></meta>
+	<meta content="Phaser App" name="apple-mobile-web-app-title"></meta>
+    <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0" />
+	<title>Emergency</title>
+	<script src="js/phaser.min.js"></script>
+	<script src="js/phaser-state-transition-plugin.js"></script>
+	<script src="js/B.js"></script>
+	<script src="js/P.js"></script>
+	<script src="js/M.js"></script>
+	<script src="js/G.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+
+window.onload = function() {
+	var game = new Phaser.Game(480,640, Phaser.CANVAS, '');
+	game.state.add('Boot', Bacteria.Boot);
+	game.state.add('Preloader', Bacteria.Preloader);
+	game.state.add('MainMenu', Bacteria.MainMenu);
+	game.state.add('Game', Bacteria.Game);
+	game.state.start('Boot');
+};
+
+</script>
+
+</body>
+</html>

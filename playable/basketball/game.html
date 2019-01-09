@@ -1,0 +1,261 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Basketball</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+	<link rel="stylesheet" href="css/style.css" />
+    <script type="text/javascript">
+
+var Basketball = {};
+Basketball.Params = {
+    baseWidth: 1920,
+    baseHeight: 1080,
+    minPadding: 50,
+    horizontalMargin: 0,
+    verticalMargin: 0,
+    landscapeRatio: 1.2,
+    currentDevicePixelRatio: 1,
+    iconSize: 364
+};
+Basketball.Boot = function(game) {};
+Basketball.Boot.prototype = {
+    init: function() {
+        this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+    },
+    preload: function() {},
+    create: function() {
+        this.state.start("Loading")
+    }
+};
+Basketball.Loading = function(game) {};
+Basketball.Loading.prototype = {
+    init: function() {},
+    preload: function() {
+        this.stage.backgroundColor = 0x222222;
+        this.load.image("bg", "assets/images/bg.png");
+        this.load.image("cta", "assets/images/getnow.png");
+        this.load.image("ball", "assets/images/ball.png");
+        this.load.image("basket", "assets/images/basket.png");
+        this.load.image('side rim', 'assets/images/side_rim.png');
+    },
+    create: function() {
+        this.state.start("Game")
+    }
+};
+Basketball.MyGame = function(game) {};
+Basketball.MyGame.prototype = {
+    preload: function() {},
+    create: function() {
+        this.physics.startSystem(Phaser.Physics.P2JS);
+        this.physics.p2.setImpactEvents(true);
+        this.physics.p2.restitution = 0.63;
+        this.physics.p2.gravity.y = 0;
+        this.bg = this.game.add.sprite(this.world.centerX, this.world.centerY, "bg");
+		this.bg.anchor.set(0.5);
+        collisionGroup = this.physics.p2.createCollisionGroup();
+        current_score_text = this.game.add.text(this.world.centerX / 8, this.world.centerY / 8, 'Score: 0', {
+            font: 'Arial',
+            fontSize: '30px',
+            fill: '#FFF',
+            align: 'center'
+        });
+
+        this.swipetext = this.game.add.text(this.world.centerX, this.world.centerY, 'SWIPE UP', {
+            font: 'Arial',
+            fontSize: '30px',
+            fill: '#FFF',
+            align: 'center'
+        });
+        this.swipetext.anchor.set(0.5);
+        this.swipetext.y -= this.swipetext.height*1.5;
+        this.game.add.tween(this.swipetext.scale).to({x:this.swipetext.scale.x*1.2, y:this.swipetext.scale.y*1.2}, 1000, Phaser.Easing.Quadratic.InOut,true,0,-1,true);
+
+  		this.cta = this.game.add.sprite(this.world.centerX, this.game.height, "cta");
+		this.cta.anchor.set(0.5);
+		this.cta.y -= this.cta.height*2;
+		this.cta.inputEnabled = true;
+		this.cta.visible = false;
+		this.cta.events.onInputUp.add(this.onClickCTA,this);
+
+  		this.ctatween = this.game.add.tween(this.cta.scale).to({x:this.cta.scale.x*1.2, y:this.cta.scale.y*1.2}, 1000, Phaser.Easing.Quadratic.InOut,false,0,-1,true);
+
+        this.positionControls(this.game.width, this.game.height);
+        this.input.onDown.add(this.click, this);
+        this.input.onUp.add(this.release, this)
+    },
+    onClickCTA: function(){
+    	console.log("clicked cta");
+    },
+    scaleSprite: function(sprite, availableSpaceWidth, availableSpaceHeight, padding, scaleMultiplier, isFullScale) {
+        var scale = this.getSpriteScale(sprite._frame.width, sprite._frame.height, availableSpaceWidth, availableSpaceHeight, padding, isFullScale);
+        sprite.scale.x = scale * scaleMultiplier;
+        sprite.scale.y = scale * scaleMultiplier
+    },
+    getSpriteScale: function(spriteWidth, spriteHeight, availableSpaceWidth, availableSpaceHeight, minPadding, isFullScale) {
+        var ratio = 1;
+        var currentDevicePixelRatio = window.devicePixelRatio;
+        var widthRatio = (spriteWidth * currentDevicePixelRatio + 2 * minPadding) / availableSpaceWidth;
+        var heightRatio = (spriteHeight * currentDevicePixelRatio + 2 * minPadding) / availableSpaceHeight;
+        if (widthRatio > 1 || heightRatio > 1) {
+            ratio = 1 / Math.max(widthRatio, heightRatio)
+        } else {
+            if (isFullScale) ratio = 1 / Math.max(widthRatio, heightRatio)
+        }
+        return ratio * currentDevicePixelRatio
+    },
+
+    positionControls: function(width, height) {
+        if (typeof this.hoop != "undefined") this.hoop.kill();
+        if (typeof ball != "undefined") ball.kill();
+        if (typeof left_rim != "undefined") left_rim.kill();
+        if (typeof right_rim != "undefined") right_rim.kill();
+        if (typeof front_rim != "undefined") front_rim.kill();
+
+        
+            ball = this.game.add.sprite(this.world.centerX, this.world.centerY, "ball");
+            this.scaleSprite(ball, width, height / 2, 50, 0.3);
+            this.game.physics.p2.enable(ball, false);
+            ball.body.setCircle(60);
+            ball.launched = false;
+            ball.isBelowHoop = false;
+            left_rim = this.game.add.sprite(this.world.centerX - (this.world.centerX / 6), (this.world.centerY - height / 3) + (height / 24), 'side rim');
+            this.scaleSprite(left_rim, this.world.centerX - (this.world.centerX / 6), (this.world.centerY - height / 3) + (height / 4), 50, 1);
+            right_rim = this.game.add.sprite(this.world.centerX + (this.world.centerX / 6), (this.world.centerY - height / 3) + (height / 24), 'side rim');
+            this.scaleSprite(right_rim, this.world.centerX + (this.world.centerX / 6), (this.world.centerY - height / 3) + (height / 4), 50, 1);
+
+            basket = this.game.add.sprite(this.world.centerX, (this.world.centerY - height / 3.5) , "basket");
+            basket.anchor.set(0.5)
+            this.scaleSprite(basket, this.world.centerX - (this.world.centerX / 6), (this.world.centerY - height / 3) + (height / 4), 50, 0.8);
+            this.physics.p2.enable([left_rim, right_rim], false);
+            left_rim.body.setCircle(2.5);
+            left_rim.body.static = true;
+            left_rim.body.setCollisionGroup(collisionGroup);
+            left_rim.body.collides([collisionGroup]);
+            right_rim.body.setCircle(2.5);
+            right_rim.body.static = true;
+            right_rim.body.setCollisionGroup(collisionGroup);
+            right_rim.body.collides([collisionGroup]);
+            left_rim.alpha=0;
+            right_rim.alpha=0;
+            ball.bringToTop();
+
+    },
+    click: function(pointer) {
+    	this.swipetext.kill();
+        var bodies = this.game.physics.p2.hitTest(pointer.position, [ball.body]);
+        if (bodies.length) {
+            start_location = [pointer.x, pointer.y];
+            isDown = true;
+            location_interval = setInterval(function() {
+                start_location = [pointer.x, pointer.y]
+            }.bind(this), 200)
+        }
+    },
+    release: function(pointer) {
+        if (isDown) {
+            window.clearInterval(location_interval);
+            isDown = false;
+            end_location = [pointer.x, pointer.y];
+            if (end_location[1] < start_location[1]) {
+                var slope = [end_location[0] - start_location[0], end_location[1] - start_location[1]];
+                var x_traj = -1000 * slope[0] / slope[1];
+                this.launch(x_traj)
+            }
+        }
+    },
+    launch: function(x_traj) {
+        if (ball.launched === false) {
+            ball.body.setCircle(36);
+            ball.body.setCollisionGroup(collisionGroup);
+            ball.launched = true;
+                this.game.physics.p2.gravity.y = 4200;
+                this.game.add.tween(ball.scale).to({
+                    x: 0.15,
+                    y: 0.15
+                }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false)
+    
+            this.scaleSprite(ball, this.game.width, this.game.height / 2, 50, 0.3);
+            ball.body.velocity.x = x_traj;
+            ball.body.velocity.y = -1625;
+            ball.body.rotateRight(x_traj / 3);
+        }
+    },
+    hitRim: function() {
+        if (ball && ball.body.velocity.y > 0 && !checkScore) {
+            ball.isBelowHoop = true;
+            checkScore = true;
+            ball.body.collideWorldBounds = false;
+            var rand = Math.floor(Math.random() * 5);
+            var lowerx = this.world.centerX - 20;
+            var upperx = this.world.centerX + 20;
+            if (ball.body.x > lowerx && ball.body.x < upperx) {
+                current_score += 1;
+                current_score_text.text = "Score: " + current_score;
+            } else {}
+        }
+    },
+    update: function() {
+        if (ball && ball.body.velocity.y > 0) {
+            ball.body.collides([collisionGroup], this.hitRim, this)
+        }
+        if (ball && ball.body.velocity.y > 0 && ball.body.y > 150 && !ball.isBelowHoop) {
+            ball.isBelowHoop = true;
+            ball.body.collideWorldBounds = false;
+            var rand = Math.floor(Math.random() * 5);
+            var lowerx = this.world.centerX - 20;
+            var upperx = this.world.centerX + 20;
+            if (ball.body.x > lowerx && ball.body.x < upperx) {
+                checkScore = true;
+                current_score += 1;
+                current_score_text.text = "Score: " + current_score;
+                  if(current_score>=5){
+                	this.cta.visible = true;
+  					this.ctatween.start();
+                }
+            } else {
+            	fails+=1;
+            	if(fails>=3){
+                	this.cta.visible = true;
+  					this.ctatween.start();
+                }
+            }
+        }
+        if (ball && ball.body.y > 2000) {
+            this.game.physics.p2.gravity.y = 0;
+            ball.kill();
+            checkScore = false;
+
+                ball = this.game.add.sprite(this.world.centerX, this.world.centerY, "ball");
+                this.scaleSprite(ball, this.game.width, this.game.height / 2, 50, 0.3);
+                this.game.physics.p2.enable(ball, false);
+                ball.body.setCircle(60);
+                ball.launched = false;
+                ball.isBelowHoop = false;
+
+        }
+    }
+};
+var mygame, collisionGroup, left_rim, right_rim, ball, front_rim;
+var location_interval;
+var isDown = false;
+var checkScore = false;
+var start_location;
+var end_location;
+var score_sound, backboard, whoosh, fail, spawn;
+var current_score_text, current_score = 0,fails = 0;
+var isLandscape;
+window.onload = function() {
+    mygame = new Phaser.Game(480,640, Phaser.CANVAS);
+    mygame.state.add("Boot", Basketball.Boot);
+    mygame.state.add("Loading", Basketball.Loading);
+    mygame.state.add("Game", Basketball.MyGame);
+    mygame.state.start("Boot")
+}
+
+		
+    </script>
+</head>
+<body>
+</body>
+</html>

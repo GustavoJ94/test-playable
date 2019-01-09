@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	   <style type="text/css">
+        html, body{
+            padding: 0px;
+			margin-bottom:0px;
+            margin: 0px;
+			background: black;
+			height:100%;
+        }
+	 </style>
+	<meta charset="UTF-8" />
+	<meta content="chrome=1,IE=Edge" http-equiv="X-UA-Compatible"></meta>
+	<meta content="noindex,nofollow" name="robots"></meta>
+	<meta content="yes" name="apple-mobile-web-app-capable"></meta>
+	<meta content="black" name="apple-mobile-web-app-status-bar-style"></meta>
+	<meta content="Phaser App" name="apple-mobile-web-app-title"></meta>
+    <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0" />
+	<title>Treasure Combo</title>
+	<script src="js/phaser.min.js"></script>
+	<script src="js/phaser-state-transition-plugin.js"></script>
+	<script src="js/Boot.js"></script>
+	<script src="js/Preloader.js"></script>
+	<script src="js/MainMenu.js"></script>
+	<script src="js/ayuda.js"></script>
+	<script src="js/Game.js"></script>
+	<script src="js/levelselect.js"></script>
+	<script src="js/lavamode.js"></script>
+	<script src="js/goldmode.js"></script>
+	<script src="js/icemode.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+window.onload = function() {
+	var game = new Phaser.Game(480,640, Phaser.AUTO, '');
+	game.state.add('Boot', Treasure.Boot);
+	game.state.add('Preloader', Treasure.Preloader);
+	game.state.add('MainMenu', Treasure.MainMenu);
+	game.state.add('Ayuda', Treasure.Ayuda);
+	game.state.add('Game', Treasure.Game);
+	game.state.add('Select', Treasure.Select);
+	game.state.add('LavaMode', Treasure.Lava);
+	game.state.add('GoldMode', Treasure.Gold);
+	game.state.add('IceMode', Treasure.Ice);
+	game.state.start('Boot');
+};
+
+</script>
+
+</body>
+</html>
